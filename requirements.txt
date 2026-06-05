@@ -1,0 +1,9 @@
+scikit-learn==1.4.2
+matplotlib==3.8.4
+pandas==2.2.2
+numpy==1.26.4
+joblib==1.4.2
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.30
+seaborn==0.13.2
+streamlit==1.35.0
