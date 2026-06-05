@@ -1,6 +1,11 @@
 import os
-import psycopg2
 import sqlite3
+
+try:
+    import psycopg2
+    HAS_PSYCOPG2 = True
+except ImportError:
+    HAS_PSYCOPG2 = False
 
 class SQLiteCursorWrapper:
     """Wraps an SQLite cursor to emulate PostgreSQL syntax (translating %s placeholders to ?)."""
@@ -71,6 +76,8 @@ def get_connection():
     db_pass      = os.environ.get("DB_PASS")
 
     try:
+        if not HAS_PSYCOPG2:
+            raise ImportError("psycopg2 module is not available or failed to load.")
         if database_url:
             # Render / Heroku style: postgres://user:pass@host/db
             conn = psycopg2.connect(database_url, connect_timeout=3, sslmode="require")
