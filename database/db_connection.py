@@ -97,8 +97,10 @@ def get_connection():
         db_type = "SQLite"
 
         # Ensure database directory exists
-        os.makedirs("database", exist_ok=True)
-        sqlite_path = os.path.join("database", "credit_risk.db")
+        base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        db_dir = os.path.join(base_dir, "database")
+        os.makedirs(db_dir, exist_ok=True)
+        sqlite_path = os.path.join(db_dir, "credit_risk.db")
         conn = sqlite3.connect(sqlite_path)
         return SQLiteConnectionWrapper(conn), db_type
 
