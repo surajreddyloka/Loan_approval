@@ -141,23 +141,32 @@ st.markdown('<div class="form-section"><div class="section-label">💰 Financial
 
 c1, c2 = st.columns(2)
 with c1:
+    st.markdown("**Annual Income ($)**")
     annual_income = st.number_input(
         "Annual Income ($)", min_value=5_000, max_value=500_000,
         value=65_000, step=1_000,
+        label_visibility="collapsed",
         help="Combined yearly income of applicant and co-applicant."
     )
+    st.caption("Your total yearly earnings")
 with c2:
+    st.markdown("**Loan Amount ($)**")
     loan_amount = st.number_input(
         "Loan Amount ($)", min_value=5_000, max_value=1_000_000,
         value=120_000, step=5_000,
+        label_visibility="collapsed",
         help="Total loan amount being requested."
     )
+    st.caption("How much you want to borrow")
 
+st.markdown("**Existing Annual Debt ($)**")
 existing_debt = st.number_input(
     "Existing Annual Debt ($)", min_value=0, max_value=300_000,
     value=15_000, step=1_000,
+    label_visibility="collapsed",
     help="Total yearly debt obligations — credit cards, car loans, student loans, etc."
 )
+st.caption("Credit cards, car loans, student loans, etc.")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -166,7 +175,8 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ═══════════════════════════════════════════════════════════════
 st.markdown('<div class="form-section"><div class="section-label">📋 Applicant Profile</div>', unsafe_allow_html=True)
 
-credit_score = st.slider("Credit Score (FICO)", 300, 850, 700, step=10)
+st.markdown("**Credit Score (FICO)**")
+credit_score = st.slider("Credit Score (FICO)", 300, 850, 700, step=10, label_visibility="collapsed")
 
 # Dynamic rating badge
 if credit_score >= 740:
@@ -183,15 +193,19 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 c3, c4 = st.columns(2)
 with c3:
+    st.markdown("**Employment Status**")
     employment = st.selectbox(
         "Employment Status",
         ["Employed", "Self-Employed", "Unemployed"],
+        label_visibility="collapsed",
         help="Current employment situation of the primary applicant."
     )
 with c4:
+    st.markdown("**Education Level**")
     education = st.selectbox(
         "Education Level",
         ["Graduate", "Not Graduate"],
+        label_visibility="collapsed",
         help="Highest academic qualification achieved."
     )
 
