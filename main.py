@@ -11,12 +11,38 @@ from src.predit import make_prediction
 
 app = FastAPI(title="Loan Approval API", version="2.0")
 
+STARTUP_ERROR = None
+
+def check_table_exists():
+    from database.db_connection import get_connection
+    try:
+        conn, db_type = get_connection()
+        cursor = conn.cursor()
+        if db_type == "SQLite":
+            # In SQLite connection, we query sqlite_master
+            # But cursor is wrapped in SQLiteCursorWrapper, so we must be careful.
+            # SQLiteCursorWrapper executes raw query, but we can query sqlite_master.
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='predictions'")
+            row = cursor.fetchone()
+            exists = row is not None
+        else:
+            cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'predictions')")
+            row = cursor.fetchone()
+            exists = row[0] if row else False
+        cursor.close()
+        conn.close()
+        return exists, db_type, None
+    except Exception as e:
+        return False, "Unknown", str(e)
+
 @app.on_event("startup")
 def startup_event():
+    global STARTUP_ERROR
     from database.db_connection import init_db
     try:
         init_db()
     except Exception as e:
+        STARTUP_ERROR = str(e)
         print(f"Error initializing database on startup: {e}")
 
 # Enable CORS for frontend integration
@@ -57,7 +83,15 @@ class PredictionResponse(BaseModel):
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "version": "2.0"}
+    table_exists, db_type, db_error = check_table_exists()
+    return {
+        "status": "healthy",
+        "version": "2.1",
+        "database_type": db_type,
+        "predictions_table_exists": table_exists,
+        "database_error": db_error,
+        "startup_error": STARTUP_ERROR
+    }
 
 @app.post("/api/predict", response_model=PredictionResponse)
 def predict_loan(request: PredictionRequest):
