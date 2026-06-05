@@ -11,6 +11,14 @@ from src.predit import make_prediction
 
 app = FastAPI(title="Loan Approval API", version="2.0")
 
+@app.on_event("startup")
+def startup_event():
+    from database.db_connection import init_db
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Error initializing database on startup: {e}")
+
 # Enable CORS for frontend integration
 app.add_middleware(
     CORSMiddleware,
